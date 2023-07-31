@@ -50,5 +50,9 @@
   },
   "dependencies": {
     "magic-string": "^0.30.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
