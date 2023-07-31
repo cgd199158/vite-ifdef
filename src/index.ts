@@ -3,19 +3,19 @@ import { UserOptions } from "./types";
 import { Context } from "./context";
 import { resolveOptions } from "./options";
 
-const VitePluginConditionalCompile = (
+const ViteIfdef = (
   userOptions: UserOptions = {}
 ): Plugin => {
   const options = resolveOptions(userOptions);
   const ctx = new Context(options);
   return {
-    name: "vite-plugin-conditional-compile",
+    name: "vite-ifdef",
     enforce: "pre",
     configResolved(_config) {
-      ctx.setEnv(_config.env);
+      ctx.setEnv(_config.env.MODE);
     },
     transform: (code, id) => ctx.transform(code, id),
   };
 };
 
-export default VitePluginConditionalCompile;
+export default ViteIfdef;

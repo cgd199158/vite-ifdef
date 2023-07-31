@@ -9,10 +9,10 @@ export class Context {
   logger: Logger;
   constructor(public options: ResolvedOptions) {
     this.blockRegex =
-      /^.*?#if(n?)def\s*(\S+).*[\r\n]{1,2}([\s\S]+?)\s*.*?#endif.*?$/gm;
+      /^.*?#v-if(n?)def\s*(\S+).*[\r\n]{1,2}([\s\S]+?)\s*.*?#v-endif.*?$/gm;
     this.filter = createFilter(this.options.include, this.options.exclude);
     this.logger = createLogger("info", {
-      prefix: "[vite-plugin-conditional-compile]",
+      prefix: "[vite-ifdef]",
     });
   }
 
@@ -52,8 +52,8 @@ export class Context {
     const conditionals = this.parseConditional(conditional);
     const isKeep = conditionals.some((subConditional) => {
       const isNot = startNot !== subConditional.isNot;
-      const value = this.env[subConditional.key];
-      if (!Object.hasOwn(this.env, subConditional.key)) {
+      const value = this.env === subConditional.key;
+      if (!this.env) {
         this.logger.warn(
           `No '${subConditional.key}' propertie in Vite environment variables`,
           {
@@ -95,7 +95,7 @@ export class Context {
 
   parseElse(code: string) {
     const [_, ifCode, elseCode] = code?.match(
-      /^([\s\S]*?).*#else.*[\r\n]{1,2}([\s\S]*)$/
+      /^([\s\S]*?).*#v-else.*[\r\n]{1,2}([\s\S]*)$/
     ) ?? [code, "", ""];
     return {
       ifCode: ifCode ? ifCode : code,
